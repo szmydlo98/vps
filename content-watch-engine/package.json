@@ -1,0 +1,29 @@
+{
+  "name": "content-watch-engine",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "auth": "tsx scripts/auth.ts",
+    "test:filter": "tsx scripts/test-filter.ts"
+  },
+  "dependencies": {
+    "openai": "^4.98.0",
+    "fastify": "^4.28.1",
+    "googleapis": "^144.0.0",
+    "node-cron": "^3.0.3",
+    "pg": "^8.13.3",
+    "xml2js": "^0.6.2",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
+    "@types/pg": "^8.11.10",
+    "@types/xml2js": "^0.4.14",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
