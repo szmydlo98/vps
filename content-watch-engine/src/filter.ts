@@ -24,7 +24,7 @@ Description: ${item.description.slice(0, 800)}`;
 
     const response = await client.chat.completions.create({
       model: 'gemini-2.5-flash',
-      max_tokens: 300,
+      max_tokens: 500,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userMessage },
