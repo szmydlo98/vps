@@ -11,10 +11,9 @@ const SYSTEM_PROMPT = `You are a content relevance filter. Given a content item'
 
 The hint is a plain-English instruction written by the user for this specific source. Follow it strictly.
 
-Return ONLY a valid JSON object with no markdown, no preamble:
-{"relevant": true, "reason": "one sentence explanation"}
+Return ONLY the single word: true or false. Nothing else. No JSON, no explanation.
 
-Be conservative — only mark relevant if the item clearly matches the hint.`;
+Be conservative — only return true if the item clearly matches the hint.`;
 
 export async function shouldSave(item: ContentItem): Promise<FilterResult> {
   try {
@@ -24,20 +23,16 @@ Description: ${item.description.slice(0, 800)}`;
 
     const response = await client.chat.completions.create({
       model: 'gemini-2.5-flash',
-      max_tokens: 500,
+      max_tokens: 10,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: userMessage },
       ],
     });
 
-    const raw = response.choices[0].message.content ?? '';
-    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
-    const parsed = JSON.parse(text);
-    return {
-      relevant: parsed.relevant ? 'true' : 'false',
-      reason: parsed.reason ?? '',
-    };
+    const text = (response.choices[0].message.content ?? '').trim().toLowerCase();
+    const relevant = text.startsWith('true') ? 'true' : 'false';
+    return { relevant, reason: '' };
   } catch (err) {
     return {
       relevant: 'error',
