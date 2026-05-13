@@ -17,6 +17,7 @@ exports.config = {
     webhookPublicUrl: requireEnv('WEBHOOK_PUBLIC_URL'),
     webhookSecret: requireEnv('WEBHOOK_SECRET'),
     databaseUrl: requireEnv('DATABASE_URL'),
+    youtubePlaylistId: requireEnv('YOUTUBE_PLAYLIST_ID'),
     port: parseInt(process.env.PORT ?? '3000', 10),
     logLevel: process.env.LOG_LEVEL ?? 'info',
 };

@@ -14,7 +14,7 @@ exports.youtubeWatchLaterOutput = {
             part: ['snippet'],
             requestBody: {
                 snippet: {
-                    playlistId: 'WL',
+                    playlistId: config_1.config.youtubePlaylistId,
                     resourceId: {
                         kind: 'youtube#video',
                         videoId,
