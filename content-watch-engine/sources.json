@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "inputPlugin": "youtube",
+    "id": "UCbRP3c757lWg9M-U7TyEkXA",
+    "name": "t3dotgg",
+    "hint": "save videos about AI, frontend development, and new AI model reviews. Skip podcasts, reaction videos or comments on other YouTube channels, and GitHub drama.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  }
+]
