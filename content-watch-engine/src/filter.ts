@@ -31,7 +31,8 @@ Description: ${item.description.slice(0, 800)}`;
       ],
     });
 
-    const text = response.choices[0].message.content ?? '';
+    const raw = response.choices[0].message.content ?? '';
+    const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
     const parsed = JSON.parse(text);
     return {
       relevant: parsed.relevant ? 'true' : 'false',
