@@ -18,15 +18,16 @@ const sources: Source[] =
 interface VideoSnippet {
   description: string;
   liveBroadcastContent: 'live' | 'upcoming' | 'none';
-  durationSeconds: number;
 }
 
-function parseDurationSeconds(iso: string): number {
-  const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return 0;
-  return (parseInt(match[1] ?? '0') * 3600)
-       + (parseInt(match[2] ?? '0') * 60)
-       + parseInt(match[3] ?? '0');
+async function isShort(videoId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`https://www.youtube.com/shorts/${videoId}`, { redirect: 'manual' });
+    // Shorts return 200; regular videos redirect away from /shorts/
+    return res.status === 200;
+  } catch {
+    return false;
+  }
 }
 
 async function getVideoSnippet(videoId: string): Promise<VideoSnippet> {
@@ -35,7 +36,7 @@ async function getVideoSnippet(videoId: string): Promise<VideoSnippet> {
     const res = await fetch(url);
     if (!res.ok) {
       console.warn(`[youtube/parser] videos.list HTTP ${res.status} for ${videoId}`);
-      return { description: '', liveBroadcastContent: 'none', durationSeconds: 9999 };
+      return { description: '', liveBroadcastContent: 'none' };
     }
     const data = await res.json() as {
       items?: Array<{
@@ -47,11 +48,10 @@ async function getVideoSnippet(videoId: string): Promise<VideoSnippet> {
     return {
       description: item?.snippet?.description ?? '',
       liveBroadcastContent: (item?.snippet?.liveBroadcastContent ?? 'none') as VideoSnippet['liveBroadcastContent'],
-      durationSeconds: parseDurationSeconds(item?.contentDetails?.duration ?? 'PT0S'),
     };
   } catch (err) {
     console.warn(`[youtube/parser] Failed to fetch snippet for ${videoId}:`, err);
-    return { description: '', liveBroadcastContent: 'none', durationSeconds: 9999 };
+    return { description: '', liveBroadcastContent: 'none' };
   }
 }
 
@@ -88,15 +88,18 @@ export async function parseAtom(xml: string): Promise<ContentItem | null> {
       return null;
     }
 
-    const { description, liveBroadcastContent, durationSeconds } = await getVideoSnippet(videoId);
+    const [{ description, liveBroadcastContent }, short] = await Promise.all([
+      getVideoSnippet(videoId),
+      isShort(videoId),
+    ]);
 
     if (liveBroadcastContent === 'live' || liveBroadcastContent === 'upcoming') {
       console.log(`[youtube/parser] Skipping stream/premiere: ${title}`);
       return null;
     }
 
-    if (durationSeconds <= 60) {
-      console.log(`[youtube/parser] Skipping short (${durationSeconds}s): ${title}`);
+    if (short) {
+      console.log(`[youtube/parser] Skipping short: ${title}`);
       return null;
     }
 
