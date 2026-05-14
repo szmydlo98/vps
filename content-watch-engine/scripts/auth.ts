@@ -18,7 +18,11 @@ const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, REDIRECT_URI
 const authUrl = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   prompt: 'consent',
-  scope: ['https://www.googleapis.com/auth/youtube'],
+  scope: [
+    'https://www.googleapis.com/auth/youtube',
+    'https://www.googleapis.com/auth/gmail.modify',
+    'https://www.googleapis.com/auth/gmail.send',
+  ],
 });
 
 console.log('Starting local server on http://localhost:3001 to capture the OAuth callback...\n');
