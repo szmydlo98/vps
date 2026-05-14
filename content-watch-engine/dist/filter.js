@@ -53,6 +53,7 @@ Description: ${item.description.slice(0, 800)}`;
         });
         const text = (response.choices[0].message.content ?? '').trim().toLowerCase();
         const relevant = text.startsWith('true') ? 'true' : 'false';
+        console.log(`[filter] "${item.title}" → ${relevant} | desc_len=${item.description.length} | ai_raw="${text}"`);
         return { relevant, reason: '' };
     }
     catch (err) {
