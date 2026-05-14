@@ -53,7 +53,7 @@ async function callGeminiWithRetry(messages: OpenAI.Chat.ChatCompletionMessagePa
     } catch (err) {
       const isRateLimit = err instanceof Error && err.message.includes('429');
       if (isRateLimit && attempt < 3) {
-        const delay = attempt * 30000;
+        const delay = attempt * 60000;
         console.warn(`[filter] Rate limited, retrying in ${delay / 1000}s (attempt ${attempt}/3)`);
         await new Promise(r => setTimeout(r, delay));
       } else {

@@ -6,7 +6,7 @@ const pool = new Pool({ connectionString: config.databaseUrl });
 
 export async function hasProcessed(itemId: string): Promise<boolean> {
   const { rows } = await pool.query(
-    'SELECT 1 FROM processed_items WHERE item_id = $1',
+    "SELECT 1 FROM processed_items WHERE item_id = $1 AND relevant != 'error'",
     [itemId]
   );
   return rows.length > 0;
@@ -22,7 +22,8 @@ export async function saveDecision(
     await pool.query(
       `INSERT INTO processed_items (item_id, title, source_name, input_plugin, relevant, reason, output, error_detail)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       ON CONFLICT (item_id) DO NOTHING`,
+       ON CONFLICT (item_id) DO UPDATE SET relevant = EXCLUDED.relevant, reason = EXCLUDED.reason, error_detail = EXCLUDED.error_detail
+       WHERE processed_items.relevant = 'error'`,
       [
         item.id,
         item.title,
