@@ -3,7 +3,119 @@
     "inputPlugin": "youtube",
     "id": "UCbRP3c757lWg9M-U7TyEkXA",
     "name": "t3dotgg",
-    "hint": "save videos about AI, frontend development, and new AI model reviews. Skip podcasts, reaction videos or comments on other YouTube channels, and GitHub drama.",
+    "hint": "Save videos about AI, frontend development, and new AI model reviews. Skip podcasts, reaction videos, commentary on other YouTube channels, and GitHub drama.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCqJuMiGXqB8Hl41YsGV_sMA",
+    "name": "ksiazulo",
+    "hint": "",
+    "alwaysSave": true,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCFGud6qsbaAjuP6WaXAJj3Q",
+    "name": "nieantyfan",
+    "hint": "Save videos covering Apple product announcements and software updates only.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UC1yTzj79C6SArEzTaGUf9UA",
+    "name": "bratosiewicz",
+    "hint": "Save travel videos from trips to different countries. Skip Q&A videos.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCgbnwxGAINTV2CCK1WWtiAQ",
+    "name": "bikeshowcc",
+    "hint": "Save general cycling tips and Canyon road bike reviews. Skip reviews of other brands.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCV03SRZXJEz-hchIAogeJOg",
+    "name": "claude",
+    "hint": "Save feature announcements and conference presentations. Skip everything else.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCLr4hMhk_2KE0GUBSBrspGA",
+    "name": "KubaKlawiter",
+    "hint": "Save fun and quirky tech gadget videos. Skip anything car-related.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCTTZqMWBvLsUYqYwKTdjvkw",
+    "name": "MateuszChrobok",
+    "hint": "Save all videos except podcast episodes.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCG7J20LhUeLl6y_Emi7OJrA",
+    "name": "mkbhd",
+    "hint": "Save Apple-related updates and reviews. Skip camera comparison videos.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UC1D3yD4wlPMico0dss264XA",
+    "name": "NileRed",
+    "hint": "",
+    "alwaysSave": true,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCPvOHaaP9E6FqSqG1NMV_Hw",
+    "name": "raycastapp",
+    "hint": "Save feature announcements and product updates. Skip workspace tour or setup videos featuring random users.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCubP9sr6PXM1VUaGT2iSoSg",
+    "name": "Foodemperor",
+    "hint": "",
+    "alwaysSave": true,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UC3S7sKnNyRPsdVVtehQxFXA",
+    "name": "ToZnowuOni",
+    "hint": "Save all videos except those about RPG games.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCVfCCaDlXyfdwqFLWNAzCdA",
+    "name": "TurDeTur",
+    "hint": "Save videos covering the three Grand Tours: Giro d'Italia, Tour de France, and Vuelta a España.",
+    "alwaysSave": false,
+    "output": "youtube-watch-later"
+  },
+  {
+    "inputPlugin": "youtube",
+    "id": "UCbvGeH-1-EDr2aGMI3mGSZA",
+    "name": "zebywiedziec",
+    "hint": "Save videos from the \"Dzieje\" series only.",
     "alwaysSave": false,
     "output": "youtube-watch-later"
   }
