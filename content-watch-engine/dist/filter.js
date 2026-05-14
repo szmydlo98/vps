@@ -57,10 +57,8 @@ Description: ${item.description.slice(0, 800)}`;
         return { relevant, reason: '' };
     }
     catch (err) {
-        return {
-            relevant: 'error',
-            reason: 'filter error',
-            errorDetail: err instanceof Error ? err.message : String(err),
-        };
+        const detail = err instanceof Error ? err.message : String(err);
+        console.error(`[filter] shouldSave error for "${item.title}":`, detail);
+        return { relevant: 'error', reason: 'filter error', errorDetail: detail };
     }
 }
