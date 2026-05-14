@@ -38,20 +38,39 @@ The hint is a plain-English instruction written by the user for this specific so
 Return ONLY the single word: true or false. Nothing else. No JSON, no explanation.
 
 Be conservative — only return true if the item clearly matches the hint.`;
+async function callGeminiWithRetry(messages) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const response = await client.chat.completions.create({
+                model: 'gemini-2.0-flash',
+                max_tokens: 10,
+                messages,
+            });
+            return (response.choices[0].message.content ?? '').trim().toLowerCase();
+        }
+        catch (err) {
+            const isRateLimit = err instanceof Error && err.message.includes('429');
+            if (isRateLimit && attempt < 3) {
+                const delay = attempt * 30000;
+                console.warn(`[filter] Rate limited, retrying in ${delay / 1000}s (attempt ${attempt}/3)`);
+                await new Promise(r => setTimeout(r, delay));
+            }
+            else {
+                throw err;
+            }
+        }
+    }
+    throw new Error('Unreachable');
+}
 async function shouldSave(item) {
     try {
         const userMessage = `Source hint: ${item.hint}
 Title: ${item.title}
 Description: ${item.description.slice(0, 800)}`;
-        const response = await client.chat.completions.create({
-            model: 'gemini-2.0-flash',
-            max_tokens: 10,
-            messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
-                { role: 'user', content: userMessage },
-            ],
-        });
-        const text = (response.choices[0].message.content ?? '').trim().toLowerCase();
+        const text = await callGeminiWithRetry([
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userMessage },
+        ]);
         const relevant = text.startsWith('true') ? 'true' : 'false';
         console.log(`[filter] "${item.title}" → ${relevant} | desc_len=${item.description.length} | ai_raw="${text}"`);
         return { relevant, reason: '' };
