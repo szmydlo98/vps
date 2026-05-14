@@ -46,7 +46,7 @@ async function callGeminiWithRetry(messages: OpenAI.Chat.ChatCompletionMessagePa
     try {
       const response = await client.chat.completions.create({
         model: 'gemini-2.5-flash',
-        max_tokens: 100,
+        max_tokens: 8192,
         messages,
       });
       return (response.choices[0].message.content ?? '').trim().toLowerCase();
