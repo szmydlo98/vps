@@ -50,6 +50,7 @@ Description: ${item.description.slice(0, 800)}`;
                 { role: 'system', content: SYSTEM_PROMPT },
                 { role: 'user', content: userMessage },
             ],
+            thinking_config: { thinking_budget: 0 },
         });
         const text = (response.choices[0].message.content ?? '').trim().toLowerCase();
         const relevant = text.startsWith('true') ? 'true' : 'false';
