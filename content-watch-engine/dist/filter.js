@@ -44,13 +44,12 @@ async function shouldSave(item) {
 Title: ${item.title}
 Description: ${item.description.slice(0, 800)}`;
         const response = await client.chat.completions.create({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash',
             max_tokens: 10,
             messages: [
                 { role: 'system', content: SYSTEM_PROMPT },
                 { role: 'user', content: userMessage },
             ],
-            thinking_config: { thinking_budget: 0 },
         });
         const text = (response.choices[0].message.content ?? '').trim().toLowerCase();
         const relevant = text.startsWith('true') ? 'true' : 'false';
