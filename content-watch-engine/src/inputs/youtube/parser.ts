@@ -15,19 +15,28 @@ const sources: Source[] =
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   require('../../../sources.json');
 
-async function getVideoDescription(videoId: string): Promise<string> {
+interface VideoSnippet {
+  description: string;
+  liveBroadcastContent: 'live' | 'upcoming' | 'none';
+}
+
+async function getVideoSnippet(videoId: string): Promise<VideoSnippet> {
   try {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${config.youtubeApiKey}`;
     const res = await fetch(url);
     if (!res.ok) {
       console.warn(`[youtube/parser] videos.list HTTP ${res.status} for ${videoId}`);
-      return '';
+      return { description: '', liveBroadcastContent: 'none' };
     }
-    const data = await res.json() as { items?: Array<{ snippet?: { description?: string } }> };
-    return data.items?.[0]?.snippet?.description ?? '';
+    const data = await res.json() as { items?: Array<{ snippet?: { description?: string; liveBroadcastContent?: string } }> };
+    const snippet = data.items?.[0]?.snippet;
+    return {
+      description: snippet?.description ?? '',
+      liveBroadcastContent: (snippet?.liveBroadcastContent ?? 'none') as VideoSnippet['liveBroadcastContent'],
+    };
   } catch (err) {
-    console.warn(`[youtube/parser] Failed to fetch description for ${videoId}:`, err);
-    return '';
+    console.warn(`[youtube/parser] Failed to fetch snippet for ${videoId}:`, err);
+    return { description: '', liveBroadcastContent: 'none' };
   }
 }
 
@@ -64,7 +73,12 @@ export async function parseAtom(xml: string): Promise<ContentItem | null> {
       return null;
     }
 
-    const description = await getVideoDescription(videoId);
+    const { description, liveBroadcastContent } = await getVideoSnippet(videoId);
+
+    if (liveBroadcastContent === 'live' || liveBroadcastContent === 'upcoming') {
+      console.log(`[youtube/parser] Skipping stream/premiere: ${title}`);
+      return null;
+    }
 
     return {
       id: `yt:${videoId}`,

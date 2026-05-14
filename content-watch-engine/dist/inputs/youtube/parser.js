@@ -6,20 +6,24 @@ const config_1 = require("../../config");
 const sources = 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('../../../sources.json');
-async function getVideoDescription(videoId) {
+async function getVideoSnippet(videoId) {
     try {
         const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${config_1.config.youtubeApiKey}`;
         const res = await fetch(url);
         if (!res.ok) {
             console.warn(`[youtube/parser] videos.list HTTP ${res.status} for ${videoId}`);
-            return '';
+            return { description: '', liveBroadcastContent: 'none' };
         }
         const data = await res.json();
-        return data.items?.[0]?.snippet?.description ?? '';
+        const snippet = data.items?.[0]?.snippet;
+        return {
+            description: snippet?.description ?? '',
+            liveBroadcastContent: (snippet?.liveBroadcastContent ?? 'none'),
+        };
     }
     catch (err) {
-        console.warn(`[youtube/parser] Failed to fetch description for ${videoId}:`, err);
-        return '';
+        console.warn(`[youtube/parser] Failed to fetch snippet for ${videoId}:`, err);
+        return { description: '', liveBroadcastContent: 'none' };
     }
 }
 async function parseAtom(xml) {
@@ -49,7 +53,11 @@ async function parseAtom(xml) {
             console.warn(`[youtube/parser] Unknown channel: ${channelId}`);
             return null;
         }
-        const description = await getVideoDescription(videoId);
+        const { description, liveBroadcastContent } = await getVideoSnippet(videoId);
+        if (liveBroadcastContent === 'live' || liveBroadcastContent === 'upcoming') {
+            console.log(`[youtube/parser] Skipping stream/premiere: ${title}`);
+            return null;
+        }
         return {
             id: `yt:${videoId}`,
             title,
