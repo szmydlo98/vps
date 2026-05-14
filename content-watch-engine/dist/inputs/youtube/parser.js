@@ -6,24 +6,33 @@ const config_1 = require("../../config");
 const sources = 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('../../../sources.json');
+function parseDurationSeconds(iso) {
+    const match = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+    if (!match)
+        return 0;
+    return (parseInt(match[1] ?? '0') * 3600)
+        + (parseInt(match[2] ?? '0') * 60)
+        + parseInt(match[3] ?? '0');
+}
 async function getVideoSnippet(videoId) {
     try {
-        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${config_1.config.youtubeApiKey}`;
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&id=${videoId}&key=${config_1.config.youtubeApiKey}`;
         const res = await fetch(url);
         if (!res.ok) {
             console.warn(`[youtube/parser] videos.list HTTP ${res.status} for ${videoId}`);
-            return { description: '', liveBroadcastContent: 'none' };
+            return { description: '', liveBroadcastContent: 'none', durationSeconds: 9999 };
         }
         const data = await res.json();
-        const snippet = data.items?.[0]?.snippet;
+        const item = data.items?.[0];
         return {
-            description: snippet?.description ?? '',
-            liveBroadcastContent: (snippet?.liveBroadcastContent ?? 'none'),
+            description: item?.snippet?.description ?? '',
+            liveBroadcastContent: (item?.snippet?.liveBroadcastContent ?? 'none'),
+            durationSeconds: parseDurationSeconds(item?.contentDetails?.duration ?? 'PT0S'),
         };
     }
     catch (err) {
         console.warn(`[youtube/parser] Failed to fetch snippet for ${videoId}:`, err);
-        return { description: '', liveBroadcastContent: 'none' };
+        return { description: '', liveBroadcastContent: 'none', durationSeconds: 9999 };
     }
 }
 async function parseAtom(xml) {
@@ -53,9 +62,13 @@ async function parseAtom(xml) {
             console.warn(`[youtube/parser] Unknown channel: ${channelId}`);
             return null;
         }
-        const { description, liveBroadcastContent } = await getVideoSnippet(videoId);
+        const { description, liveBroadcastContent, durationSeconds } = await getVideoSnippet(videoId);
         if (liveBroadcastContent === 'live' || liveBroadcastContent === 'upcoming') {
             console.log(`[youtube/parser] Skipping stream/premiere: ${title}`);
+            return null;
+        }
+        if (durationSeconds <= 60) {
+            console.log(`[youtube/parser] Skipping short (${durationSeconds}s): ${title}`);
             return null;
         }
         return {
